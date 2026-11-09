@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math and String functions</title>
+  <style>
+    :root { --bg:#0b1020; --panel:#141c31; --panel2:#19243d; --gold:#f4c95d; --text:#f4f6fb; --muted:#aab5cc; --line:#2b3855; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial, Helvetica, sans-serif; background:linear-gradient(135deg,#090d19,#111a2e); color:var(--text); }
+    header { text-align:center; padding:38px 18px 28px; border-bottom:1px solid var(--line); }
+    header h1 { margin:0 0 10px; color:var(--gold); font-size:clamp(1.8rem,4vw,2.7rem); }
+    header p { margin:0; color:var(--muted); }
+    main { max-width:1100px; margin:28px auto; padding:0 16px 40px; }
+    .intro { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin-bottom:22px; color:var(--muted); line-height:1.6; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr)); gap:22px; align-items:start; }
+    section { background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; box-shadow:0 12px 28px #0002; }
+    h2 { margin:0 0 18px; color:var(--gold); font-size:1.45rem; }
+    h3 { margin:20px 0 10px; font-size:1rem; color:#e3e9f5; }
+    label { display:block; margin:12px 0 6px; color:var(--muted); font-size:.9rem; }
+    input, textarea { width:100%; padding:11px 12px; border-radius:8px; border:1px solid var(--line); background:#0d1425; color:var(--text); font:inherit; outline:none; }
+    input:focus, textarea:focus { border-color:var(--gold); }
+    textarea { resize:vertical; min-height:90px; }
+    .fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+    .fields > div { min-width:0; }
+    button { border:0; border-radius:8px; padding:10px 13px; margin:10px 6px 0 0; background:var(--gold); color:#161a25; font-weight:700; cursor:pointer; }
+    button:hover { filter:brightness(1.08); }
+    button.secondary { background:#293754; color:var(--text); border:1px solid #3b4a69; }
+    .result { margin-top:15px; padding:13px 14px; border-radius:9px; background:#0d1425; border:1px solid var(--line); min-height:44px; white-space:pre-wrap; overflow-wrap:anywhere; line-height:1.55; }
+    .result strong { color:var(--gold); }
+    .hint { color:var(--muted); font-size:.82rem; line-height:1.5; }
+    footer { text-align:center; color:var(--muted); padding:20px; border-top:1px solid var(--line); font-size:.85rem; }
+    @media(max-width:520px) { section { padding:16px; } .fields { grid-template-columns:1fr; } }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Math and String Functions</h1>
+  <p>An interactive demonstration of JavaScript's built-in String and Math methods</p>
+</header>
+<main>
+  <div class="intro">Enter your own values, choose an operation, and click its button to see the result instantly. String positions use zero-based indexing. Trigonometric functions use angles in degrees here, converted to radians for JavaScript.</div>
+  <div class="grid">
+    <section>
+      <h2>String Functions</h2>
+      <label for="textInput">Enter text</label>
+      <textarea id="textInput" placeholder="Example: JavaScript makes web pages interactive">JavaScript makes web pages interactive</textarea>
+      <div class="fields">
+        <div><label for="wordInput">Word to find / replace</label><input id="wordInput" value="web" placeholder="Enter a word"></div>
+        <div><label for="replaceInput">Replacement word</label><input id="replaceInput" value="modern" placeholder="Replace with"></div>
+      </div>
+      <h3>Basic and search operations</h3>
+      <button onclick="stringOp('length')">Length</button>
+      <button onclick="stringOp('first')">First occurrence</button>
+      <button onclick="stringOp('last')">Last occurrence</button>
+      <button onclick="stringOp('search')">Search word</button>
+      <button onclick="stringOp('replace')">Replace word</button>
+      <button onclick="stringOp('upper')">Uppercase</button>
+      <button onclick="stringOp('lower')">Lowercase</button>
+      <h3>Slicing operations</h3>
+      <div class="fields">
+        <div><label for="startIndex">Start index</label><input type="number" id="startIndex" value="0"></div>
+        <div><label for="endIndex">End index</label><input type="number" id="endIndex" value="10"></div>
+        <div><label for="substrLength">Length (for substr)</label><input type="number" id="substrLength" value="10" min="0"></div>
+      </div>
+      <button onclick="stringOp('slice')">Slice</button>
+      <button onclick="stringOp('substring')">Substring</button>
+      <button onclick="stringOp('substr')">Substr</button>
+      <div id="stringResult" class="result" aria-live="polite">Your string operation result will appear here.</div>
+      <p class="hint">Note: <code>substr()</code> is a legacy method but is included because it is part of the assignment requirements.</p>
+    </section>
+
+    <section>
+      <h2>Math Functions</h2>
+      <label for="numA">Number / angle (degrees)</label>
+      <input type="number" id="numA" value="-27.6" step="any">
+      <label for="numB">Second number (used for power, min and max)</label>
+      <input type="number" id="numB" value="7" step="any">
+      <div class="fields">
+        <div><label for="powerBase">Power base</label><input type="number" id="powerBase" value="2" step="any"></div>
+        <div><label for="powerExp">Power exponent</label><input type="number" id="powerExp" value="3" step="any"></div>
+        <div><label for="sqrtNum">Square root input</label><input type="number" id="sqrtNum" value="49" min="0" step="any"></div>
+        <div><label for="randomMax">Random integer maximum</label><input type="number" id="randomMax" value="100" min="1" step="1"></div>
+      </div>
+      <h3>Number operations</h3>
+      <button onclick="mathOp('power')">Power</button>
+      <button onclick="mathOp('sqrt')">Square root</button>
+      <button onclick="mathOp('round')">Round</button>
+      <button onclick="mathOp('ceil')">Ceiling</button>
+      <button onclick="mathOp('floor')">Floor</button>
+      <button onclick="mathOp('abs')">Absolute value</button>
+      <h3>Trigonometry and comparisons</h3>
+      <button onclick="mathOp('sin')">Sine</button>
+      <button onclick="mathOp('cos')">Cosine</button>
+      <button onclick="mathOp('min')">Minimum</button>
+      <button onclick="mathOp('max')">Maximum</button>
+      <button onclick="mathOp('random')">Random number</button>
+      <div id="mathResult" class="result" aria-live="polite">Your math operation result will appear here.</div>
+      <button class="secondary" onclick="clearResults()">Clear results</button>
+    </section>
+  </div>
+</main>
+<footer>Created with HTML, CSS and JavaScript</footer>
+<script>
+  const byId = id => document.getElementById(id);
+  const show = (id, label, value) => {
+    byId(id).innerHTML = '<strong>' + escapeHTML(label) + ':</strong> ' + escapeHTML(String(value));
+  };
+  function escapeHTML(value) {
+    return value.replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  }
+  function stringOp(op) {
+    const text = byId('textInput').value;
+    const word = byId('wordInput').value;
+    const replacement = byId('replaceInput').value;
+    const start = Number(byId('startIndex').value);
+    const end = Number(byId('endIndex').value);
+    const length = Number(byId('substrLength').value);
+    let label, value;
+    switch(op) {
+      case 'length': label='String length'; value=text.length; break;
+      case 'first': label='First occurrence index'; value=word ? text.indexOf(word) : 'Enter a word first'; break;
+      case 'last': label='Last occurrence index'; value=word ? text.lastIndexOf(word) : 'Enter a word first'; break;
+      case 'search': {
+        const index = word ? text.search(escapeRegExp(word)) : -1;
+        label='Search result';
+        value = !word ? 'Enter a word first' : index === -1 ? 'Word not found (index -1)' : 'Found at index ' + index;
+        break;
+      }
+      case 'slice': label='slice(' + start + ', ' + end + ')'; value=text.slice(start, end); break;
+      case 'substring': label='substring(' + start + ', ' + end + ')'; value=text.substring(start, end); break;
+      case 'substr': label='substr(' + start + ', ' + length + ')'; value=text.substr(start, length); break;
+      case 'replace': label='Replace first match'; value=word ? text.replace(word, replacement) : 'Enter a word to replace'; break;
+      case 'upper': label='Uppercase'; value=text.toUpperCase(); break;
+      case 'lower': label='Lowercase'; value=text.toLowerCase(); break;
+    }
+    show('stringResult', label, value);
+  }
+  function escapeRegExp(value) { return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+  function mathOp(op) {
+    const a = Number(byId('numA').value);
+    const b = Number(byId('numB').value);
+    const base = Number(byId('powerBase').value);
+    const exponent = Number(byId('powerExp').value);
+    const root = Number(byId('sqrtNum').value);
+    const max = Math.floor(Number(byId('randomMax').value));
+    let label, value;
+    switch(op) {
+      case 'power': label='Math.pow(' + base + ', ' + exponent + ')'; value=Math.pow(base, exponent); break;
+      case 'sqrt':
+        label='Math.sqrt(' + root + ')';
+        value=root < 0 ? 'Square root of a negative number is not a real number' : Math.sqrt(root);
+        break;
+      case 'round': label='Math.round(' + a + ')'; value=Math.round(a); break;
+      case 'ceil': label='Math.ceil(' + a + ')'; value=Math.ceil(a); break;
+      case 'floor': label='Math.floor(' + a + ')'; value=Math.floor(a); break;
+      case 'abs': label='Math.abs(' + a + ')'; value=Math.abs(a); break;
+      case 'sin': label='Math.sin(' + a + '°)'; value=Math.sin(a * Math.PI / 180); break;
+      case 'cos': label='Math.cos(' + a + '°)'; value=Math.cos(a * Math.PI / 180); break;
+      case 'min': label='Math.min(' + a + ', ' + b + ')'; value=Math.min(a,b); break;
+      case 'max': label='Math.max(' + a + ', ' + b + ')'; value=Math.max(a,b); break;
+      case 'random':
+        label='Random integer from 0 to ' + Math.max(1,max);
+        value=Math.floor(Math.random() * (Math.max(1,max) + 1));
+        break;
+    }
+    if (typeof value === 'number' && Number.isFinite(value)) value = Number(value.toFixed(8));
+    show('mathResult', label, value);
+  }
+  function clearResults() {
+    byId('stringResult').textContent='Your string operation result will appear here.';
+    byId('mathResult').textContent='Your math operation result will appear here.';
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mouse Over and Mouse Out Events</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px;
+      font-family: Arial, Helvetica, sans-serif; color: #182238;
+      background: linear-gradient(135deg, #eef2ff, #d1fae5);
+    }
+    .demo-card {
+      width: min(760px, 100%); padding: clamp(18px, 4vw, 34px);
+      text-align: center; background: rgba(255,255,255,.92);
+      border: 1px solid #fff; border-radius: 22px;
+      box-shadow: 0 18px 48px rgba(31,41,55,.15);
+    }
+    h1 { margin: 0 0 10px; color: #3730a3; font-size: clamp(1.6rem, 4vw, 2.3rem); }
+    .description { margin: 0 0 22px; color: #64748b; line-height: 1.6; }
+    .content-area {
+      padding: 14px; border: 2px dashed #a5b4fc; border-radius: 16px;
+      background: #f8fafc; cursor: pointer; transition: border-color .2s ease;
+    }
+    .content-area:hover { border-color: #7c3aed; }
+    .content-area img {
+      display: block; width: 100%; max-height: 380px; object-fit: cover;
+      border-radius: 12px;
+    }
+    .content-area h2 { margin: 18px 0 8px; font-size: clamp(1.2rem, 3vw, 1.6rem); }
+    .content-area p { margin: 0 0 8px; color: #64748b; }
+    .hint { margin: 18px 0 0; color: #64748b; font-size: .9rem; }
+    .alternate { color: #6d28d9; }
+  </style>
+</head>
+<body>
+  <main class="demo-card">
+    <h1>Mouse Events Demo</h1>
+    <p class="description">Move your mouse over the content area to change the image and heading. Move it away to restore the original content.</p>
+
+    <section class="content-area" id="contentArea">
+      <img id="sceneImage" src="data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20360%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23dbeafe%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a7f3d0%22/%3E%3C/linearGradient%3E%3C/defs%3E%0A%3Crect%20width%3D%22640%22%20height%3D%22360%22%20rx%3D%2224%22%20fill%3D%22url%28%23bg%29%22/%3E%0A%3Ccircle%20cx%3D%22505%22%20cy%3D%2276%22%20r%3D%2234%22%20fill%3D%22%23fbbf24%22/%3E%0A%3Cpath%20d%3D%22M0%20280%20Q120%20210%20250%20280%20T500%20265%20T640%20280%20V360%20H0Z%22%20fill%3D%22%2334d399%22/%3E%0A%3Cpath%20d%3D%22M0%20315%20Q150%20260%20300%20320%20T640%20300%20V360%20H0Z%22%20fill%3D%22%23059669%22/%3E%0A%3Crect%20x%3D%22270%22%20y%3D%22150%22%20width%3D%22100%22%20height%3D%22130%22%20rx%3D%228%22%20fill%3D%22%2392400e%22/%3E%0A%3Cpath%20d%3D%22M220%20160%20L320%2065%20L420%20160Z%22%20fill%3D%22%23166534%22/%3E%0A%3Cpath%20d%3D%22M240%20130%20L320%2055%20L400%20130Z%22%20fill%3D%22%2315803d%22/%3E%0A%3Crect%20x%3D%22305%22%20y%3D%22210%22%20width%3D%2230%22%20height%3D%2270%22%20rx%3D%224%22%20fill%3D%22%23fef3c7%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2245%22%20font-family%3D%22Arial%2Csans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22700%22%20fill%3D%22%23164e63%22%3EA%20peaceful%20little%20scene%3C/text%3E%0A%3C/svg%3E" alt="A peaceful landscape with a tree and sunshine">
+      <h2 id="sceneHeading">Welcome to the peaceful scene!</h2>
+      <p id="sceneDescription">Hover over this area to reveal a surprise.</p>
+    </section>
+    <p class="hint">Try moving your mouse into and out of the illustrated area.</p>
+  </main>
+
+  <script>
+    const contentArea = document.getElementById("contentArea");
+    const sceneImage = document.getElementById("sceneImage");
+    const sceneHeading = document.getElementById("sceneHeading");
+    const sceneDescription = document.getElementById("sceneDescription");
+
+    const originalImage = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20360%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23dbeafe%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%23a7f3d0%22/%3E%3C/linearGradient%3E%3C/defs%3E%0A%3Crect%20width%3D%22640%22%20height%3D%22360%22%20rx%3D%2224%22%20fill%3D%22url%28%23bg%29%22/%3E%0A%3Ccircle%20cx%3D%22505%22%20cy%3D%2276%22%20r%3D%2234%22%20fill%3D%22%23fbbf24%22/%3E%0A%3Cpath%20d%3D%22M0%20280%20Q120%20210%20250%20280%20T500%20265%20T640%20280%20V360%20H0Z%22%20fill%3D%22%2334d399%22/%3E%0A%3Cpath%20d%3D%22M0%20315%20Q150%20260%20300%20320%20T640%20300%20V360%20H0Z%22%20fill%3D%22%23059669%22/%3E%0A%3Crect%20x%3D%22270%22%20y%3D%22150%22%20width%3D%22100%22%20height%3D%22130%22%20rx%3D%228%22%20fill%3D%22%2392400e%22/%3E%0A%3Cpath%20d%3D%22M220%20160%20L320%2065%20L420%20160Z%22%20fill%3D%22%23166534%22/%3E%0A%3Cpath%20d%3D%22M240%20130%20L320%2055%20L400%20130Z%22%20fill%3D%22%2315803d%22/%3E%0A%3Crect%20x%3D%22305%22%20y%3D%22210%22%20width%3D%2230%22%20height%3D%2270%22%20rx%3D%224%22%20fill%3D%22%23fef3c7%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2245%22%20font-family%3D%22Arial%2Csans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22700%22%20fill%3D%22%23164e63%22%3EA%20peaceful%20little%20scene%3C/text%3E%0A%3C/svg%3E';
+    const alternateImage = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20640%20360%22%3E%0A%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20stop-color%3D%22%23312e81%22/%3E%3Cstop%20offset%3D%221%22%20stop-color%3D%22%237c3aed%22/%3E%3C/linearGradient%3E%3C/defs%3E%0A%3Crect%20width%3D%22640%22%20height%3D%22360%22%20rx%3D%2224%22%20fill%3D%22url%28%23bg%29%22/%3E%0A%3Ccircle%20cx%3D%22505%22%20cy%3D%2275%22%20r%3D%2227%22%20fill%3D%22%23fde68a%22/%3E%0A%3Cg%20fill%3D%22%23fff%22%3E%3Ccircle%20cx%3D%2290%22%20cy%3D%2270%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22170%22%20cy%3D%22115%22%20r%3D%224%22/%3E%3Ccircle%20cx%3D%22260%22%20cy%3D%2255%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22410%22%20cy%3D%22125%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22565%22%20cy%3D%22165%22%20r%3D%224%22/%3E%3Ccircle%20cx%3D%2285%22%20cy%3D%22205%22%20r%3D%223%22/%3E%3Ccircle%20cx%3D%22475%22%20cy%3D%2235%22%20r%3D%223%22/%3E%3C/g%3E%0A%3Cpath%20d%3D%22M0%20300%20Q130%20230%20260%20300%20T500%20285%20T640%20300%20V360%20H0Z%22%20fill%3D%22%234338ca%22/%3E%0A%3Cpath%20d%3D%22M0%20325%20Q160%20270%20320%20330%20T640%20315%20V360%20H0Z%22%20fill%3D%22%231e1b4b%22/%3E%0A%3Cpath%20d%3D%22M320%2075%20L345%20155%20L430%20160%20L365%20210%20L385%20295%20L320%20245%20L255%20295%20L275%20210%20L210%20160%20L295%20155Z%22%20fill%3D%22%23facc15%22%20stroke%3D%22%23fef3c7%22%20stroke-width%3D%225%22/%3E%0A%3Ctext%20x%3D%2232%22%20y%3D%2245%22%20font-family%3D%22Arial%2Csans-serif%22%20font-size%3D%2224%22%20font-weight%3D%22700%22%20fill%3D%22%23fff%22%3ESurprise%21%20%E2%9C%A8%3C/text%3E%0A%3C/svg%3E';
+
+    contentArea.addEventListener("mouseover", function () {
+      sceneImage.src = alternateImage;
+      sceneImage.alt = "A glowing golden star against a magical purple night sky";
+      sceneHeading.textContent = "Surprise! A little magic appears!";
+      sceneHeading.classList.add("alternate");
+      sceneDescription.textContent = "You moved your mouse over the content area.";
+    });
+
+    contentArea.addEventListener("mouseout", function (event) {
+      // Ignore movement between child elements inside the same content area.
+      if (contentArea.contains(event.relatedTarget)) return;
+
+      sceneImage.src = originalImage;
+      sceneImage.alt = "A peaceful landscape with a tree and sunshine";
+      sceneHeading.textContent = "Welcome to the peaceful scene!";
+      sceneHeading.classList.remove("alternate");
+      sceneDescription.textContent = "Hover over this area to reveal a surprise.";
+    });
+  </script>
+</body>
+</html>

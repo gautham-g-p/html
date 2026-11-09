@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monthly Calendar</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #151e33;
+      --panel-dark: #0f1729;
+      --gold: #f4c95d;
+      --text: #f4f6fb;
+      --muted: #aab5cc;
+      --line: #2c3a57;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #080c17, #17223a);
+    }
+    .container { width: min(760px, 100%); margin: 0 auto; }
+    header { text-align: center; margin-bottom: 24px; }
+    header h1 { margin: 0 0 8px; color: var(--gold); font-size: clamp(1.8rem, 5vw, 2.6rem); }
+    header p { margin: 0; color: var(--muted); line-height: 1.5; }
+    .controls, .calendar-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 22px;
+      box-shadow: 0 14px 35px #0003;
+    }
+    .controls { margin-bottom: 20px; }
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    label { display: block; margin-bottom: 7px; color: var(--muted); font-size: .92rem; }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--text);
+      background: var(--panel-dark);
+      font: inherit;
+    }
+    input:focus, select:focus { outline: 2px solid #f4c95d66; border-color: var(--gold); }
+    .buttons { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 17px; }
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 11px 17px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .generate { background: var(--gold); color: #171b25; }
+    .reset { background: #293754; color: var(--text); border: 1px solid #3b4a69; }
+    button:hover { filter: brightness(1.08); }
+    .calendar-card { display: none; }
+    .calendar-heading { text-align: center; margin: 0 0 18px; color: var(--gold); font-size: 1.55rem; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px; }
+    .weekday, .date-cell {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 43px; border-radius: 8px;
+    }
+    .weekday { background: #24314b; color: var(--gold); font-size: .88rem; font-weight: 700; }
+    .date-cell { background: var(--panel-dark); border: 1px solid #202d47; }
+    .date-cell.today { border: 2px solid var(--gold); color: var(--gold); font-weight: 700; }
+    .date-cell.empty { background: transparent; border-color: transparent; }
+    .message { color: #ffb4b4; margin: 12px 0 0; font-size: .9rem; }
+    footer { text-align: center; color: var(--muted); margin-top: 22px; font-size: .85rem; }
+    @media (max-width: 480px) {
+      body { padding: 20px 10px; }
+      .controls, .calendar-card { padding: 15px; }
+      .input-grid { grid-template-columns: 1fr; }
+      .calendar-grid { gap: 3px; }
+      .weekday, .date-cell { min-height: 36px; font-size: .85rem; border-radius: 5px; }
+      .weekday { font-size: .72rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Monthly Calendar</h1>
+      <p>Choose a year and month to generate the calendar.</p>
+    </header>
+
+    <section class="controls" aria-label="Calendar controls">
+      <div class="input-grid">
+        <div>
+          <label for="year">Year</label>
+          <input type="number" id="year" min="1" max="9999" placeholder="e.g. 2026" value="2026">
+        </div>
+        <div>
+          <label for="month">Month</label>
+          <select id="month">
+            <option value="0">January</option>
+            <option value="1">February</option>
+            <option value="2">March</option>
+            <option value="3">April</option>
+            <option value="4">May</option>
+            <option value="5">June</option>
+            <option value="6">July</option>
+            <option value="7">August</option>
+            <option value="8">September</option>
+            <option value="9" selected>October</option>
+            <option value="10">November</option>
+            <option value="11">December</option>
+          </select>
+        </div>
+      </div>
+      <div class="buttons">
+        <button class="generate" type="button" onclick="generateCalendar()">Generate Calendar</button>
+        <button class="reset" type="button" onclick="resetCalendar()">Reset</button>
+      </div>
+      <p id="message" class="message" role="alert"></p>
+    </section>
+
+    <section class="calendar-card" id="calendarCard" aria-live="polite">
+      <h2 class="calendar-heading" id="calendarTitle">October 2026</h2>
+      <div class="calendar-grid" id="calendarGrid"></div>
+    </section>
+    <footer>Built with HTML, CSS and JavaScript</footer>
+  </main>
+
+  <script>
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    const weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    function generateCalendar() {
+      const yearInput = document.getElementById("year");
+      const monthInput = document.getElementById("month");
+      const message = document.getElementById("message");
+      const year = Number(yearInput.value);
+      const month = Number(monthInput.value);
+      message.textContent = "";
+
+      if (!Number.isInteger(year) || year < 1 || year > 9999) {
+        message.textContent = "Please enter a year between 1 and 9999.";
+        document.getElementById("calendarCard").style.display = "none";
+        return;
+      }
+
+      // Day of week for the first date (0 = Sunday) and days in selected month.
+      const startingDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const grid = document.getElementById("calendarGrid");
+      grid.innerHTML = "";
+      document.getElementById("calendarTitle").textContent = monthNames[month] + " " + year;
+
+      weekdays.forEach(day => {
+        const heading = document.createElement("div");
+        heading.className = "weekday";
+        heading.textContent = day.slice(0, 3);
+        heading.title = day;
+        grid.appendChild(heading);
+      });
+
+      // Blank cells align day 1 under the correct weekday.
+      for (let i = 0; i < startingDay; i++) {
+        const blank = document.createElement("div");
+        blank.className = "date-cell empty";
+        blank.setAttribute("aria-hidden", "true");
+        grid.appendChild(blank);
+      }
+
+      const now = new Date();
+      for (let date = 1; date <= daysInMonth; date++) {
+        const cell = document.createElement("div");
+        cell.className = "date-cell";
+        cell.textContent = date;
+        if (year === now.getFullYear() && month === now.getMonth() && date === now.getDate()) {
+          cell.classList.add("today");
+          cell.title = "Today";
+        }
+        grid.appendChild(cell);
+      }
+      document.getElementById("calendarCard").style.display = "block";
+    }
+
+    function resetCalendar() {
+      document.getElementById("year").value = "";
+      document.getElementById("month").value = "0";
+      document.getElementById("calendarGrid").innerHTML = "";
+      document.getElementById("calendarTitle").textContent = "Monthly Calendar";
+      document.getElementById("calendarCard").style.display = "none";
+      document.getElementById("message").textContent = "";
+    }
+
+    // Generate an initial calendar when the page opens.
+    generateCalendar();
+  </script>
+</body>
+</html>

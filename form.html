@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Information Form</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #151e33;
+      --input: #0d1425;
+      --gold: #f4c95d;
+      --text: #f4f6fb;
+      --muted: #aab5cc;
+      --line: #2c3a57;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 14px;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(135deg, #080c17, #17223a);
+    }
+    .form-card {
+      width: min(480px, 100%);
+      padding: 28px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 16px 40px #0004;
+    }
+    h1 { text-align: center; color: var(--gold); margin: 0 0 8px; font-size: 1.9rem; }
+    .subtitle { text-align: center; color: var(--muted); margin: 0 0 24px; line-height: 1.5; }
+    .field { margin-bottom: 16px; }
+    label { display: block; margin-bottom: 7px; color: #e2e8f4; font-size: .93rem; }
+    input {
+      width: 100%;
+      padding: 12px 13px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--input);
+      color: var(--text);
+      font: inherit;
+    }
+    input:focus { outline: 2px solid #f4c95d55; border-color: var(--gold); }
+    input::placeholder { color: #75829d; }
+    .hint { color: var(--muted); font-size: .78rem; margin: 6px 0 0; line-height: 1.4; }
+    .actions { display: flex; gap: 10px; margin-top: 22px; }
+    button {
+      flex: 1;
+      padding: 12px;
+      border: 0;
+      border-radius: 8px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .submit { background: var(--gold); color: #171b25; }
+    .reset { background: #293754; color: var(--text); border: 1px solid #3b4a69; }
+    button:hover { filter: brightness(1.08); }
+    #successMessage {
+      display: none;
+      margin-top: 18px;
+      padding: 12px;
+      border: 1px solid #34765a;
+      background: #123326;
+      color: #baf4d5;
+      border-radius: 8px;
+      line-height: 1.5;
+    }
+    @media (max-width: 420px) { .form-card { padding: 20px 16px; } }
+  </style>
+</head>
+<body>
+  <main class="form-card">
+    <h1>User Registration</h1>
+    <p class="subtitle">Enter your details. All fields must be valid before submission.</p>
+
+    <form id="userForm" novalidate>
+      <div class="field">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Enter your full name" autocomplete="name">
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="text" id="email" name="email" placeholder="name@example.com" autocomplete="email">
+      </div>
+
+      <div class="field">
+        <label for="mobile">Mobile number</label>
+        <input type="text" id="mobile" name="mobile" placeholder="10-digit mobile number" inputmode="numeric" maxlength="10" autocomplete="tel">
+      </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="Choose a username" autocomplete="username">
+      </div>
+
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="Create a strong password" autocomplete="new-password">
+        <p class="hint">At least 8 characters with uppercase, lowercase, a digit, and a special character.</p>
+      </div>
+
+      <div class="actions">
+        <button class="submit" type="submit">Submit</button>
+        <button class="reset" type="reset">Reset</button>
+      </div>
+      <div id="successMessage" role="status"></div>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById("userForm");
+    const successMessage = document.getElementById("successMessage");
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      successMessage.style.display = "none";
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const mobile = document.getElementById("mobile").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      // Names may contain letters, spaces, apostrophes, and hyphens.
+      const namePattern = /^[A-Za-z]+(?:[ '\-][A-Za-z]+)*$/;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const mobilePattern = /^\d{10}$/;
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/;
+
+      if (name === "") {
+        alert("Please enter your name.");
+        document.getElementById("name").focus();
+        return;
+      }
+      if (!namePattern.test(name)) {
+        alert("Name can contain only letters, spaces, apostrophes, and hyphens.");
+        document.getElementById("name").focus();
+        return;
+      }
+      if (email === "" || !emailPattern.test(email)) {
+        alert("Please enter a valid email address (for example, name@example.com).");
+        document.getElementById("email").focus();
+        return;
+      }
+      if (!mobilePattern.test(mobile)) {
+        alert("Mobile number must contain exactly 10 digits.");
+        document.getElementById("mobile").focus();
+        return;
+      }
+      if (username === "") {
+        alert("Please enter a username.");
+        document.getElementById("username").focus();
+        return;
+      }
+      if (!passwordPattern.test(password)) {
+        alert("Password must be at least 8 characters and include uppercase and lowercase letters, a digit, and a special character.");
+        document.getElementById("password").focus();
+        return;
+      }
+
+      // Demonstration only: no information is sent to a server.
+      successMessage.textContent = "Form submitted successfully! All entered details passed validation.";
+      successMessage.style.display = "block";
+      alert("Form submitted successfully!");
+    });
+
+    form.addEventListener("reset", function () {
+      successMessage.style.display = "none";
+    });
+  </script>
+</body>
+</html>
